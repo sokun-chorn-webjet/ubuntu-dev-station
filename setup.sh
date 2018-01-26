@@ -75,6 +75,8 @@ exit
 # git credential - remember for 24hr
 git config credential.helper
 git config --global credential.helper "cache --timeout=86400"
+# git logline (ref. https://ma.ttias.be/pretty-git-log-in-one-line/)
+git config --global alias.logline "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 # terminal theme
 wget -O gogh https://git.io/vQgMr && chmod +x gogh && ./gogh
