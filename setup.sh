@@ -3,16 +3,6 @@
 # ----------------------------------------------
 # setup development environment (Ubuntu)
 
-# review packages version
-cat > /tmp/version <<EOL
-# visit: https://download.docker.com/linux/ubuntu/dists/zesty/pool/stable/amd64/
-export DOCKER_VERSION=17.12.0
-# visit: https://github.com/creationix/nvm#installation
-export NODE_NVM_VERSION=0.33.8
-EOL
-vi /tmp/version
-source /tmp/version
-
 # change priviledge
 sudo su -
 
@@ -37,11 +27,8 @@ Type=Application
 Categories=Development;
 EOL
 
-# wiznote
-add-apt-repository ppa:wiznote-team
-
 # install
-apt update && apt install -y git tmux vim chromium-browser calibre shutter code meld wiznote
+apt update && apt install -y git jq tmux vim chromium-browser calibre shutter code meld
 exit
 
 # install powerline fonts
@@ -57,15 +44,17 @@ wget https://raw.githubusercontent.com/csokun/ubuntu-dev-station/master/.tmux.co
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 wget https://raw.githubusercontent.com/csokun/ubuntu-dev-station/master/.vimrc
 
-# install nvm - Node Version Manager 
-wget -qO- https://raw.githubusercontent.com/creationix/nvm/v${NODE_NVM_VERSION}/install.sh | bash
+# install nvm - Node Version Manager
+NODE_NVM_VERSION=$(curl -s "https://api.github.com/repos/creationix/nvm/tags" | jq ".[0].name")
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/${NODE_NVM_VERSION}/install.sh | bash
 source ~/.bashrc
 # install node lts
 nvm install --lts && nvm use --lts
 
 # docker
-DOCKER_PACKAGE=docker-ce_${DOCKER_VERSION}~ce-0~ubuntu_amd64.deb
-wget https://download.docker.com/linux/ubuntu/dists/zesty/pool/stable/amd64/$DOCKER_PACKAGE
+DOCKER_PACKAGE_URL=https://download.docker.com/linux/ubuntu/dists/$(lsb_release -c | cut -f2)/pool/stable/amd64/
+DOCKER_PACKAGE=$(wget -q https://download.docker.com/linux/ubuntu/dists/artful/pool/stable/amd64/ -O - | tr '\n' ' ' | grep -Po '(?<=href=")[^"]*' | tail -1)
+wget ${DOCKER_PACKAGE_URL}${DOCKER_PACKAGE}
 sudo su -
 dpkg -i $DOCKER_PACKAGE
 usermod -aG docker $USER		# run docker without sudo
