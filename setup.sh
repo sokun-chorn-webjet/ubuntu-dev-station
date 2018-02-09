@@ -28,7 +28,7 @@ Categories=Development;
 EOL
 
 # install
-apt update && apt install -y git jq tmux vim chromium-browser calibre shutter code meld
+apt update && apt install -y git jq tmux vim calibre shutter code meld
 exit
 
 # install powerline fonts
