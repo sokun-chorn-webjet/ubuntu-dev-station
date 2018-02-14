@@ -1,6 +1,12 @@
 set nocompatible	" be iMproved, required
 filetype off		" required
 
+" disable bell sound and window flashing
+set noerrorbells visualbell t_vb=
+if has('autocmd')
+  autocmd GUIEnter * set visualbell t_vb=
+endif
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
