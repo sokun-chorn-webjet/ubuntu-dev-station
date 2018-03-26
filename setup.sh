@@ -28,7 +28,7 @@ Categories=Development;
 EOL
 
 # install
-apt update && apt install -y git jq tmux vim calibre shutter code meld
+apt update && apt install -y git jq tmux vim calibre shutter code meld gitk
 exit
 
 # install powerline fonts
@@ -62,10 +62,13 @@ systemctl enable docker			# start docker on boot
 exit
 
 # git credential - remember for 24hr
+wget https://raw.githubusercontent.com/wmanley/git-meld/master/git-meld.pl -qO ~/.git-meld.pl
+
 git config credential.helper
 git config --global credential.helper "cache --timeout=86400"
 # git logline (ref. https://ma.ttias.be/pretty-git-log-in-one-line/)
 git config --global alias.logline "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+git config --global alias.meld=!/home/$USER/.git-meld.pl
 
 # terminal theme
 wget -O gogh https://git.io/vQgMr && chmod +x gogh && ./gogh
@@ -75,6 +78,3 @@ wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-pro
 echo "source ~/.git-prompt.sh" >> ~/.bashrc
 echo "PS1='\[\e[32m\]\u\[\e[m\]\[\e[35m\]@\h\[\e[m\]:\w$(__git_ps1 " (%s)")\n \$ '" >> ~/.bashrc
 source ~/.bashrc
-
-# cleanup
-rm /tmp/version
