@@ -5,11 +5,14 @@
 
 # change priviledge
 sudo su -
+apt update && apt install -y curl jq bash-completion
 
 # vscode (ref. https://code.visualstudio.com/docs/setup/linux#_debian-and-ubuntu-based-distributions)
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+if [ ! /etc/apt/trusted.gpg.d/microsoft.gpg ]; then
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+    mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+    sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+fi
 
 # install postman
 wget https://dl.pstmn.io/download/latest/linux64 -O postman.tar.gz
@@ -28,7 +31,7 @@ Categories=Development;
 EOL
 
 # install
-apt update && apt install -y git jq tmux vim calibre shutter code meld gitk
+apt update && apt install -y git tmux vim calibre shutter code meld gitk
 exit
 
 # install powerline fonts
@@ -45,7 +48,7 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 wget https://raw.githubusercontent.com/csokun/ubuntu-dev-station/master/.vimrc
 
 # install nvm - Node Version Manager
-NODE_NVM_VERSION=$(curl -s "https://api.github.com/repos/creationix/nvm/tags" | jq ".[0].name")
+NODE_NVM_VERSION=$(curl -s "https://api.github.com/repos/creationix/nvm/tags" | jq ".[0].name" | sed 's/\"//g')
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/${NODE_NVM_VERSION}/install.sh | bash
 source ~/.bashrc
 # install node lts
