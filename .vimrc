@@ -24,6 +24,13 @@ Plugin 'vim-syntastic/syntastic'
 Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'edkolev/tmuxline.vim.git'
 Plugin 'tomlion/vim-solidity'
+Plugin 'wincent/terminus'
+Plugin 'Yggdroot/indentLine'
+Plugin 'rust-lang/rust.vim'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+Plugin 'w0rp/ale'
+Plugin 'prettier/vim-prettier'
 
 " colorschemes
 Plugin 'nanotech/jellybeans.vim.git'
@@ -40,6 +47,9 @@ set backspace=2			" Backspace deletes like most programs in insert mode
 set tabstop=2				" Show existing tab with 2 spaces width
 set shiftwidth=2		" When indenting with '>', use 2 spaces width
 "set expandtab			" On pressing tab insert 2 spaces
+set list
+set showbreak=↪\
+set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 
 set ruler
 set showcmd
@@ -105,7 +115,8 @@ let g:buffergator_suppress_keymaps = 1
 
 " airline
 let g:airline_powerline_fonts = 1
-
-" transparent background
 hi NonText ctermbg=none 
 hi Normal guibg=NONE ctermbg=NONE
+
+" syntax highlighting and indenting *.jsx only
+let g:jsx_ext_required = 1
