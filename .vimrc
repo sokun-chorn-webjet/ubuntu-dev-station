@@ -46,10 +46,10 @@ set numberwidth=5
 set backspace=2			" Backspace deletes like most programs in insert mode
 set tabstop=2				" Show existing tab with 2 spaces width
 set shiftwidth=2		" When indenting with '>', use 2 spaces width
-"set expandtab			" On pressing tab insert 2 spaces
+set expandtab			" On pressing tab insert 2 spaces
+
 set list
-set showbreak=↪\
-set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
+set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨,space:.
 
 set ruler
 set showcmd
