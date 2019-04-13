@@ -2,36 +2,10 @@
 # Pre-requisites:
 # ----------------------------------------------
 # setup development environment (Ubuntu)
-
+set -e
 # change priviledge
 sudo su -
-apt update && apt install -y curl jq bash-completion
-
-# vscode (ref. https://code.visualstudio.com/docs/setup/linux#_debian-and-ubuntu-based-distributions)
-if [ ! /etc/apt/trusted.gpg.d/microsoft.gpg ]; then
-    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-    mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-    sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-fi
-
-# install postman
-wget https://dl.pstmn.io/download/latest/linux64 -O postman.tar.gz
-tar -xzf postman.tar.gz -C /opt
-rm postman.tar.gz
-ln -s /opt/Postman/Postman /usr/bin/postman
-cat > ~/.local/share/applications/postman.desktop <<EOL
-[Desktop Entry]
-Encoding=UTF-8
-Name=Postman
-Exec=postman
-Icon=/opt/Postman/resources/app/assets/icon.png
-Terminal=false
-Type=Application
-Categories=Development;
-EOL
-
-# install
-apt update && apt install -y git tmux vim calibre shutter code meld gitk
+apt update && apt install -y curl jq xsel bash-completion git tmux vim calibre meld gitk
 exit
 
 # install powerline fonts
@@ -51,17 +25,20 @@ wget https://raw.githubusercontent.com/csokun/ubuntu-dev-station/master/.vimrc
 NODE_NVM_VERSION=$(curl -s "https://api.github.com/repos/creationix/nvm/tags" | jq ".[0].name" | sed 's/\"//g')
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/${NODE_NVM_VERSION}/install.sh | bash
 source ~/.bashrc
-# install node lts
-nvm install --lts && nvm use --lts
+sleep 2s && nvm install 10.13.0 && nvm alias default 10.13.0
 
 # docker
-DOCKER_PACKAGE_URL=https://download.docker.com/linux/ubuntu/dists/$(lsb_release -c | cut -f2)/pool/stable/amd64/
-DOCKER_PACKAGE=$(wget -q https://download.docker.com/linux/ubuntu/dists/artful/pool/stable/amd64/ -O - | tr '\n' ' ' | grep -Po '(?<=href=")[^"]*' | tail -1)
-wget ${DOCKER_PACKAGE_URL}${DOCKER_PACKAGE}
 sudo su -
+DOCKER_PACKAGE_URL=https://download.docker.com/linux/ubuntu/dists/$(lsb_release -c | cut -f2)/pool/nightly/amd64/
+DOCKER_PACKAGE=$(wget -q $DOCKER_PACKAGE_URL -O - | tr '\n' ' ' | grep -Po '(?<=href=")[^"]*' | tail -1)
+wget ${DOCKER_PACKAGE_URL}${DOCKER_PACKAGE}
 dpkg -i $DOCKER_PACKAGE
 usermod -aG docker $USER		# run docker without sudo
 systemctl enable docker			# start docker on boot
+
+DOCKER_COMPOSE_VERSION=$(curl -s "https://api.github.com/repos/docker/compose/releases" | jq ".[0].name" | sed 's/\"//g')
+curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
 exit
 
 # git credential - remember for 24hr
@@ -71,13 +48,30 @@ git config credential.helper
 git config --global credential.helper "cache --timeout=86400"
 # git logline (ref. https://ma.ttias.be/pretty-git-log-in-one-line/)
 git config --global alias.logline "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-git config --global alias.meld=!/home/$USER/.git-meld.pl
 
-# terminal theme
-wget -O gogh https://git.io/vQgMr && chmod +x gogh && ./gogh
+# tor-browser
+TOR_BROWSER_VERSION=8.0.8
+TOR_BROWSER="tor-browser-linux64-${TOR_BROWSER_VERSION}_en-US.tar.xz"
+wget "https://dist.torproject.org/torbrowser/${TOR_BROWSER_VERSION}/${TOR_BROWSER}" -qO $TOR_BROWSER
+mkdir -p $HOME/tor-browser
+tar -xJf $TOR_BROWSER -C $HOME/tor-browser
+rm $TOR_BROWSER
 
 # setup prompt
 wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -qO ~/.git-prompt.sh
-echo "source ~/.git-prompt.sh" >> ~/.bashrc
-echo "PS1='\[\e[32m\]\u\[\e[m\]\[\e[35m\]@\h\[\e[m\]:\w$(__git_ps1 " (%s)")\n \$ '" >> ~/.bashrc
+cat >> ~/.bashrc <<EOL
+# git-prompt
+source ~/.git-prompt.sh
+PS1='\[\e[32m\]\u\[\e[m\]\[\e[35m\]@\h\[\e[m\]:\w\$(__git_ps1 " (%s)")\n \$ '
+EOL
+
 source ~/.bashrc
+
+# install snap packages
+sudo snap install postman vlc htop ffmpeg audacity
+sudo snap install code --classic
+sudo snap install kubectl --classic
+
+# terminal theme
+read -p "Create a dummy profile for gnome terminal and Press enter to continue"
+wget -O gogh https://git.io/vQgMr && chmod +x gogh && ./gogh
