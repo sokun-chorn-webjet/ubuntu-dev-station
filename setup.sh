@@ -3,6 +3,11 @@
 # ----------------------------------------------
 # setup development environment (Ubuntu)
 set -e
+
+# prefer package version
+export NODE_VERSION=10.16.0
+export TOR_BROWSER_VERSION=8.5.3
+
 # change priviledge
 sudo su -
 apt update && apt install -y curl jq xsel bash-completion git tmux vim calibre meld gitk
@@ -25,7 +30,7 @@ wget https://raw.githubusercontent.com/csokun/ubuntu-dev-station/master/.vimrc
 NODE_NVM_VERSION=$(curl -s "https://api.github.com/repos/creationix/nvm/tags" | jq ".[0].name" | sed 's/\"//g')
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/${NODE_NVM_VERSION}/install.sh | bash
 source ~/.bashrc
-sleep 2s && nvm install 10.13.0 && nvm alias default 10.13.0
+sleep 2s && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION
 
 # docker
 sudo su -
@@ -50,12 +55,15 @@ git config --global credential.helper "cache --timeout=86400"
 git config --global alias.logline "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 # tor-browser
-TOR_BROWSER_VERSION=8.0.8
 TOR_BROWSER="tor-browser-linux64-${TOR_BROWSER_VERSION}_en-US.tar.xz"
 wget "https://dist.torproject.org/torbrowser/${TOR_BROWSER_VERSION}/${TOR_BROWSER}" -qO $TOR_BROWSER
 mkdir -p $HOME/tor-browser
 tar -xJf $TOR_BROWSER -C $HOME/tor-browser
 rm $TOR_BROWSER
+cat >> ~/.bashrc <<EOL
+# tor-browser
+alias tb='echo "http://uj3wazyk5u4hnvtk.onion/" | xsel --clipboard && $HOME/tor-browser/Browser/start-tor-browser --detach'
+EOL
 
 # setup prompt
 wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -qO ~/.git-prompt.sh
