@@ -73,6 +73,14 @@ source ~/.git-prompt.sh
 PS1='\[\e[32m\]\u\[\e[m\]\[\e[35m\]@\h\[\e[m\]:\w\$(__git_ps1 " (%s)")\n \$ '
 EOL
 
+cat >> ~/.bashrc <<EOL
+# setup Elixir aliases
+alias iex='docker run -it -v ${PWD}/.mix:/.mix -v ${PWD}/.hex:/.hex -v ${PWD}/src:/src --workdir /src --rm --network=host -u $(id -u ${USER}):$(id -g ${USER}) elixir'
+alias elixir='docker run -it -v ${PWD}/.mix:/.mix -v ${PWD}/.hex:/.hex -v ${PWD}/src:/src --workdir /src --rm --network=host -u $(id -u ${USER}):$(id -g ${USER}) elixir elixir'
+alias mix='docker run -it -v ${PWD}/.mix:/.mix -v ${PWD}/.hex:/.hex -v ${PWD}/src:/src --workdir /src --rm --network=host -u $(id -u ${USER}):$(id -g ${USER}) elixir mix'
+alias elc='echo "removing .mix and .hex directories" && rm -rf .mix && rm -rf .hex'
+EOL
+
 source ~/.bashrc
 
 # install snap packages
