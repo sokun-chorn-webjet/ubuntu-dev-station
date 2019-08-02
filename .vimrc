@@ -1,5 +1,7 @@
 set nocompatible	" be iMproved, required
 filetype off		" required
+set encoding=utf-8
+syntax on
 
 " disable bell sound and window flashing
 set noerrorbells visualbell t_vb=
@@ -86,9 +88,12 @@ map <C-n> :NERDTreeToggle<CR> " Ctrl + n
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " close vim if the onl window left option is a NERDTree
-" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-let NERDTreeShowHidden	= 1
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let NERDTreeShowHidden	= 0
 let NERDTreeIgnore			= ['.git$[[dir]]', '.swp', 'node_modules', '\.png$', '\.jpg$']
+let g:NERDTreeDirArrowExpandable = '+'
+let g:NERDTreeDirArrowCollapsible = '-'
+let g:NERDTreeNodeDelimiter = "\u00a0"
 
 " syntastic
 let g:syntastic_javascript_checkers=['eslint']
